@@ -1,13 +1,24 @@
+'use client';
+
+import { useRouter } from "next/navigation";
 
 export default function Home() {
+  const router = useRouter()
+  const handleLogin = () => {
+    router.push('/login');
+  }
+  const handleSignUp = () => {
+    router.push('/signup');
+  }
+
   return (
      <div className="relative grid grid-rows-[20px_1fr_20px] items-start justify-items-center min-h-screen p-8 pb-20 sm:p-20 font-[family-name:var(--font-geist-sans)]">
       
       <div className="absolute top-4 right-4 flex gap-4">
-        <button className="text-sm text-white bg-gray-800 px-4 py-2 rounded hover:bg-gray-700 cursor-pointer">
+        <button onClick={handleLogin} className="text-sm text-white bg-gray-800 px-4 py-2 rounded hover:bg-gray-700 cursor-pointer">
           Login
         </button>
-        <button className="text-sm text-white bg-gray-800 px-4 py-2 rounded hover:bg-gray-700 cursor-pointer">
+        <button onClick={handleSignUp} className="text-sm text-white bg-gray-800 px-4 py-2 rounded hover:bg-gray-700 cursor-pointer">
           Sign Up
         </button>
       </div>
