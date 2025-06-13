@@ -1,8 +1,33 @@
 'use client';
 
 import { useRouter } from "next/navigation";
+import { useAuth } from "./hooks/useAuth";
+import Image from "next/image";
+
+function UserAvatar({ user }) {
+  if (user?.user_metadata?.avatar_url) {
+    console.log(user.user_metadata.avatar_url)
+    console.log(user)
+    return (
+      <Image
+        width={40}
+        height={40}
+        src={user.user_metadata.avatar_url}
+        alt="User avatar"
+        className="w-10 h-10 rounded-full"
+      />
+    );
+  }
+  const letter = user?.email ? user.email.charAt(0).toUpperCase() : '?';
+  return (
+    <div className="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center font-bold select-none">
+      {letter}
+    </div>
+  );
+}
 
 export default function Home() {
+  const { user, authLoading } = useAuth();
   const router = useRouter()
   const handleLogin = () => {
     router.push('/login');
@@ -11,18 +36,12 @@ export default function Home() {
     router.push('/signup');
   }
 
-  return (
-     <div className="relative grid grid-rows-[20px_1fr_20px] items-start justify-items-center min-h-screen p-8 pb-20 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      
-      <div className="absolute top-4 right-4 flex gap-4">
-        <button onClick={handleLogin} className="text-sm text-white bg-gray-800 px-4 py-2 rounded hover:bg-gray-700 cursor-pointer">
-          Login
-        </button>
-        <button onClick={handleSignUp} className="text-sm text-white bg-gray-800 px-4 py-2 rounded hover:bg-gray-700 cursor-pointer">
-          Sign Up
-        </button>
-      </div>
+  if (authLoading) {
+    return null // Maybe add spinner here later
+  }
 
+  return (
+      <div className="pt-16 pl-60 sm:pl-52 md:pl-64 p-6 min-h-screen bg-black text-white">
       <main className="flex flex-col gap-[32px] row-start-2 items-center justify-center mt-20">
         <h1 className="text-4xl font-bold">Welcome to Studify AI</h1>
         <p className="text-lg text-gray-400">

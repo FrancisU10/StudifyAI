@@ -1,14 +1,11 @@
 'use client'
 
-import Login from "../../../components/Login"
+import Login from "../components/Login"
 import Image from "next/image"
-import { useRouter } from "next/navigation"
+import { useAuth } from "../hooks/useAuth"
 
 export default function LoginPage() {
-    const router = useRouter();
-    const returnToHome = () => {
-        router.push('/');
-    }
+    const { signInWithGoogle, error } = useAuth()
     return (
         <>
         <div className="flex flex-col items-center justify-center min-h-screen">
@@ -22,8 +19,6 @@ export default function LoginPage() {
                         alt="Studify AI Logo"
                         width={100}
                         height={100}
-                        className="cursor-pointer"
-                        onClick={returnToHome}
                     />
                 </div>
                 <Login />
@@ -40,7 +35,7 @@ export default function LoginPage() {
                         height={24}
                         className="mb-0"
                     />
-                    <p className="text-blue-600 hover:underline text-sm">
+                    <p onClick={signInWithGoogle} className="text-blue-600 hover:underline text-sm">
                         Login with Google
                     </p>
                 </div>
@@ -50,6 +45,7 @@ export default function LoginPage() {
                     Don't have an account?
                     <a href="/signup" className="text-blue-600 hover:underline ml-1">Sign Up</a>
                 </p>
+                {error && <p className="text-red-500">{error}</p>}
             </div>
         </div>
         </>
