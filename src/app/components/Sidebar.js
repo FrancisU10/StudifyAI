@@ -93,25 +93,18 @@ export default function Sidebar() {
           </div>
         ) : (
           <ul className="space-y-2 p-2">
-            {videos.map(({ videoId, title }) => (
-              <li key={videoId} className="flex items-center bg-gradient-to-r from-zinc-800 to-zinc-600 rounded-lg transition-colors justify-between">
-                <Link
-                  href={`/study-material/${videoId}`}
-                  className="block py-2 rounded w-full text-zinc-200 hover:text-white truncate"
-                  title={title}
-                >
-                  {title || videoId}
-                </Link>
-                 <button
-                  onClick={() => handleDelete(videoId)}
-                  disabled={deletingId === videoId}
-                  aria-label={`Delete ${title}`}
-                  className="mr-2 text-lg text-red-600 hover:text-red-800"
-                >
-                  ×
-                </button>
-              </li>
-            ))}
+            {videos
+              .filter(video => video.videoId) 
+              .map(({ videoId, title }) => (
+                <li key={videoId} className="flex items-center bg-gradient-to-r from-zinc-800 to-zinc-600 rounded-lg transition-colors justify-between">
+                  <Link
+                    href={`/study-material/${videoId}`}
+                    className="block py-2 rounded w-full text-zinc-200 hover:text-white truncate"
+                  >
+                    {title}
+                  </Link>
+                </li>
+              ))}
           </ul>
         )}
       </nav>

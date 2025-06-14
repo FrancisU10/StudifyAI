@@ -12,7 +12,7 @@ export async function POST(request) {
             status: 400
         });
   }
-  const response = await fetch('http://studify-backend-production.up.railway.app/analyze', {
+  const response = await fetch('https://studify-backend-production.up.railway.app/analyze', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ video_id: videoId }),
