@@ -12,7 +12,7 @@ export async function POST(request) {
             status: 400
         });
   }
-  const response = await fetch('http://localhost:8000/analyze', {
+  const response = await fetch('https://studify-backend-1ai2.onrender.com/analyze', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ video_id: videoId }),
