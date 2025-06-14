@@ -10,7 +10,8 @@ export const useVideosStore = create((set, get) => ({
       set((state) => ({ videos: [...state.videos, video] }));
     }
   },
-
+  setVideos: (videoArray) => set({ videos: videoArray }),
+  
   setMaterial: (videoId, data) => {
     set((state) => ({
       materials: {

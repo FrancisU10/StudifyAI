@@ -4,11 +4,44 @@ import Link from "next/link";
 import { useAuth } from "../hooks/useAuth";
 import { useRouter } from "next/navigation";
 import { useVideosStore } from "../store/videosStore";
+import { useEffect } from "react";
+import { supabase } from "../supabase/supabaseClient";
 
 export default function Sidebar() {
   const { signOut, loading, authLoading, user } = useAuth()
   const router = useRouter();
+  const setVideos = useVideosStore((state) => state.setVideos);
   const videos = useVideosStore((state) => state.videos);
+
+  useEffect(() => {
+    const fetchVideos = async () => {
+      if (!user || authLoading) return;
+
+      const { data, error } = await supabase
+        .from("studyMaterials")
+        .select("video_id, title")
+        .eq("user_id", user.id);
+
+      if (error) {
+        console.error("Error fetching videos:", error);
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        setVideos([]);
+        return;
+      }
+
+      setVideos(
+        data.map((video) => ({
+          videoId: video.video_id,
+          title: video.title,
+        }))
+      );
+    };
+
+    fetchVideos();
+  }, [user, authLoading, setVideos]);
 
   const handleLogout = async () => {
     const success = await signOut();
@@ -62,7 +95,7 @@ export default function Sidebar() {
           <button
             onClick={handleLogout}
             disabled={loading}
-            className="mt-4 px-4 py-2 bg-red-800 text-white rounded hover:bg-red-900 focus:outline-none focus:ring-2"
+            className="mt-4 px-4 py-2 w-full bg-red-800 text-white rounded hover:bg-red-900 focus:outline-none focus:ring-2"
           >
             {loading ? 'Logging out...' : 'Log Out'}
           </button>

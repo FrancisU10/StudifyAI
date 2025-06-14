@@ -4,9 +4,10 @@ import { useRouter } from "next/navigation";
 import { useVideosStore } from "./store/videosStore";
 import { useAuth } from "./hooks/useAuth";
 import { useState } from "react";
+import { supabase } from "./supabase/supabaseClient";
 
 export default function Home() {
-  const { authLoading } = useAuth();
+  const { authLoading, user } = useAuth();
   const router = useRouter()
   const addVideo = useVideosStore((state) => state.addVideo);
   const setMaterial = useVideosStore((state) => state.setMaterial);
@@ -33,6 +34,22 @@ export default function Home() {
       const data = await response.json();
       if (!response.ok) {
         throw new Error('Failed to process video');
+      }
+      if (user) {
+        const { error } = await supabase
+          .from('studyMaterials')
+          .insert([{
+            user_id: user.id,
+            video_id: data.videoId,
+            title: data.title || "Untitled Video",
+            summary: data.summary,
+            questions: data.questions,
+            flashcards: data.flashcards
+          }]);
+        if (error) {
+          console.error("Error saving study material to DB:", error);
+          alert("Failed to save study material to database.");
+        }
       }
       addVideo({
         videoId: data.videoId,

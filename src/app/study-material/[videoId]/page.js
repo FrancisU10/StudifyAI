@@ -1,23 +1,57 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { useRouter, useParams } from 'next/navigation';
-import { useVideosStore } from '../../store/videosStore';
+import { useState, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
+import { useVideosStore } from "../../store/videosStore";
+import { useAuth } from "../../hooks/useAuth";
+import { supabase } from "../../supabase/supabaseClient";
 
 export default function ResultsPage() {
   const { videoId } = useParams();
   const getMaterial = useVideosStore((state) => state.getMaterial);
+  const addVideo = useVideosStore((state) => state.addVideo);
+  const setMaterial = useVideosStore((state) => state.setMaterial);
   const [result, setResult] = useState(null);
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
+  const { user, authLoading } = useAuth();
 
   useEffect(() => {
-    const material = getMaterial(videoId);
-    if (!material) {
-      router.push('/');
-    } else {
+    async function fetchMaterial() {
+      let material = getMaterial(videoId);
+      if (!material) {
+        if (!user) {
+          router.push('/');
+          return;
+        }
+        const { data, error } = await supabase
+          .from('studyMaterials')
+          .select('*')
+          .eq('user_id', user.id)
+          .eq('video_id', videoId)
+          .single();
+
+        if (error || !data) {
+          router.push('/');
+          return;
+        }
+        addVideo({ videoId: data.video_id, title: data.title });
+        setMaterial(data.video_id, {
+          summary: data.summary,
+          questions: data.questions,
+          flashcards: data.flashcards,
+        });
+
+        material = data;
+      }
       setResult(material);
+      setLoading(false);
     }
-  }, [videoId, getMaterial, router]);
+
+    if (!authLoading) {
+      fetchMaterial();
+    }
+  }, [videoId, getMaterial, addVideo, setMaterial, user, authLoading, router]);
 
   if (!result) return <p className="text-white p-6">Loading...</p>;
 
