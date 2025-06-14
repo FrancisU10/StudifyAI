@@ -39,19 +39,35 @@ export default function Home() {
         return;
       }
       if (user) {
-        const { error } = await supabase
+        const { data: existing, error: fetchError } = await supabase
           .from('studyMaterials')
-          .insert([{
-            user_id: user.id,
-            video_id: data.videoId,
-            title: data.title || "Untitled Video",
-            summary: data.summary,
-            questions: data.questions,
-            flashcards: data.flashcards
-          }]);
-        if (error) {
-          console.error("Error saving study material to DB:", error);
-          alert("Failed to save study material to database.");
+          .select('id')
+          .eq('user_id', user.id)
+          .eq('video_id', data.videoId)
+          .single();
+
+        if (fetchError && fetchError.code !== 'PGRST116') { 
+          console.error("Error checking existing material:", fetchError);
+        }
+
+        if (!existing) {
+          const { error: insertError } = await supabase
+            .from('studyMaterials')
+            .insert([{
+              user_id: user.id,
+              video_id: data.videoId,
+              title: data.title || "Untitled Video",
+              summary: data.summary,
+              questions: data.questions,
+              flashcards: data.flashcards
+            }]);
+
+          if (insertError) {
+            console.error("Error saving study material to DB:", insertError);
+            alert("Failed to save study material to database.");
+          }
+        } else {
+          console.log("Study material already exists, skipping insert.");
         }
       }
       addVideo({

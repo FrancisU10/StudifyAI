@@ -76,7 +76,6 @@ export default function ResultsPage() {
       overflow-x-hidden
       "
     >
-      {/* Center container max width and full width */}
       <div className="w-full max-w-4xl mx-auto flex flex-col items-center space-y-16 px-4 sm:px-6 lg:px-8">
         <h1 className="text-3xl font-bold mb-6 text-center">Study Materials</h1>
 
