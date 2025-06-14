@@ -5,15 +5,34 @@ from openai import OpenAI
 from dotenv import load_dotenv
 import os
 import json
+import requests
 
 load_dotenv(dotenv_path=os.path.join(os.path.dirname(__file__), '..', '.env.local'))
 api_key = os.getenv("OPENAI_API_KEY")
+yt_api_key = os.getenv("YOUTUBE_API_KEY")
 client = OpenAI(api_key=api_key)
 
 app = FastAPI()
 
 class VidRequest(BaseModel):
     video_id: str
+
+def fetch_video_title(video_id):
+    url = "https://www.googleapis.com/youtube/v3/videos"
+    params = {
+        "part": "snippet",
+        "id": video_id,
+        "key": yt_api_key
+    }
+    response = requests.get(url, params=params)
+    if response.status_code != 200:
+        return None
+    data = response.json()
+    items = data.get("items")
+    if not items:
+        return None
+    title = items[0]["snippet"]["title"]
+    return title
 
 def chunk_text(text, max_words=2500):
     words = text.split()
@@ -24,7 +43,6 @@ def chunk_text(text, max_words=2500):
     return chunks
 
 def call_openai(prompt, max_tokens=500):
-    # Use old openai python SDK call style:
     response = client.chat.completions.create(
         model="gpt-3.5-turbo",
         messages=[
@@ -43,6 +61,7 @@ async def analyze_video(request: VidRequest):
     except NoTranscriptFound:
         raise HTTPException(status_code=404, detail="Transcript not found for this video.")
     
+    title = fetch_video_title(request.video_id) or "Untitled Video"
     full_transcript = ' '.join([entry['text'] for entry in transcript])
     chunks = chunk_text(full_transcript, max_words=2500)
 
@@ -103,5 +122,7 @@ Example format:
             "questions": [],
             "flashcards": []
         }
+    final_result['videoId'] = request.video_id
+    final_result['title'] = title 
 
     return final_result

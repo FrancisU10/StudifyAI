@@ -1,25 +1,28 @@
 'use client';
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect, useState } from 'react';
+import { useRouter, useParams } from 'next/navigation';
+import { useVideosStore } from '../../store/videosStore';
 
 export default function ResultsPage() {
+  const { videoId } = useParams();
+  const getMaterial = useVideosStore((state) => state.getMaterial);
   const [result, setResult] = useState(null);
   const router = useRouter();
 
   useEffect(() => {
-    const data = sessionStorage.getItem("studyMaterial");
-    if (!data) {
-      router.push("/");
+    const material = getMaterial(videoId);
+    if (!material) {
+      router.push('/');
     } else {
-      setResult(JSON.parse(data));
+      setResult(material);
     }
-  }, [router]);
+  }, [videoId, getMaterial, router]);
 
   if (!result) return <p className="text-white p-6">Loading...</p>;
 
   return (
-  <div className="pt-16 pl-64 p-6 min-h-screen bg-black text-white">
+    <div className="pt-16 pl-64 p-6 min-h-screen bg-black text-white">
       <h1 className="text-3xl font-bold mb-6">Study Materials</h1>
 
       <section className="mb-10">

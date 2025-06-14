@@ -44,13 +44,13 @@ export default function Navbar() {
             <>
                 <button
                 onClick={handleLogin}
-                className="text-sm text-white px-4 py-2 rounded bg-gray-700 hover:bg-gray-800 cursor-pointer"
+                className="text-sm mr-3 text-white px-4 py-2 rounded bg-zinc-700 hover:bg-zinc-800 cursor-pointer"
                 >
                 Login
                 </button>
                 <button
                 onClick={handleSignUp}
-                className="text-sm text-white px-4 py-2 rounded bg-gray-700 hover:bg-gray-800 cursor-pointer"
+                className="text-sm text-white px-4 py-2 rounded bg-zinc-700 hover:bg-zinc-800 cursor-pointer"
                 >
                 Sign Up
                 </button>

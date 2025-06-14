@@ -1,12 +1,15 @@
 'use client';
 
 import { useRouter } from "next/navigation";
+import { useVideosStore } from "./store/videosStore";
 import { useAuth } from "./hooks/useAuth";
 import { useState } from "react";
 
 export default function Home() {
   const { authLoading } = useAuth();
   const router = useRouter()
+  const addVideo = useVideosStore((state) => state.addVideo);
+  const setMaterial = useVideosStore((state) => state.setMaterial);
   const [videoURL, setVideoURL] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -16,8 +19,8 @@ export default function Home() {
   const handleGenerate = async() => {
     if (!videoURL) {
       return alert("Please enter a YouTube video URL");
-      setLoading(true);
     }
+    setLoading(true);
     try {
       const response = await fetch('/api/process-video', {
         method: 'POST',
@@ -31,8 +34,16 @@ export default function Home() {
       if (!response.ok) {
         throw new Error('Failed to process video');
       }
-      sessionStorage.setItem('studyMaterial', JSON.stringify(data));
-      router.push('/study-material');
+      addVideo({
+        videoId: data.videoId,
+        title: data.title || "Untitled Video"
+      });
+      setMaterial(data.videoId, {
+        summary: data.summary,
+        questions: data.questions,
+        flashcards: data.flashcards
+      });
+      router.push(`/study-material/${data.videoId}`);
     } catch (error) {
       console.error('Error processing video:', error);
       alert('Failed to generate study material. Please try again.');
