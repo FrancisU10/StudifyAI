@@ -36,7 +36,7 @@ export default function Navbar() {
       }
     
       if (authLoading) {
-        return null // Maybe add spinner here later
+        return null 
       }
     return (
          <nav className="fixed top-0 transition-all duration-300 right-0 h-16 flex items-center justify-end px-4 pr-6 w-[calc(100%-15rem)] sm:w-[calc(100%-13rem)] md:w-[calc(100%-16rem)] bg-black z-10">
@@ -44,13 +44,13 @@ export default function Navbar() {
             <>
                 <button
                 onClick={handleLogin}
-                className="text-sm mr-3 text-white px-4 py-2 rounded bg-zinc-700 hover:bg-zinc-800 cursor-pointer"
+                className="text-sm mr-3 text-white px-4 py-2 rounded bg-gradient-to-r from-zinc-800 to-zinc-600 cursor-pointer"
                 >
                 Login
                 </button>
                 <button
                 onClick={handleSignUp}
-                className="text-sm text-white px-4 py-2 rounded bg-zinc-700 hover:bg-zinc-800 cursor-pointer"
+                className="text-sm text-white px-4 py-2 rounded bg-gradient-to-r from-zinc-800 to-zinc-600 cursor-pointer"
                 >
                 Sign Up
                 </button>

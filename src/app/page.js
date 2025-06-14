@@ -5,6 +5,7 @@ import { useVideosStore } from "./store/videosStore";
 import { useAuth } from "./hooks/useAuth";
 import { useState } from "react";
 import { supabase } from "./supabase/supabaseClient";
+import LoadingScreen from "./components/LoadingScreen";
 
 export default function Home() {
   const { authLoading, user } = useAuth();
@@ -15,7 +16,7 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
 
   if (authLoading) {
-    return null // Maybe add spinner here later
+    return null;
   }
   const handleGenerate = async() => {
     if (!videoURL) {
@@ -33,7 +34,9 @@ export default function Home() {
 
       const data = await response.json();
       if (!response.ok) {
-        throw new Error('Failed to process video');
+        alert(data.error || 'Failed to process video.');
+        setLoading(false);
+        return;
       }
       if (user) {
         const { error } = await supabase
@@ -63,7 +66,7 @@ export default function Home() {
       router.push(`/study-material/${data.videoId}`);
     } catch (error) {
       console.error('Error processing video:', error);
-      alert('Failed to generate study material. Please try again.');
+      alert('Oops! We couldn’t process this video. It might not have a transcript or isn’t supported yet.');
     } finally {
       setLoading(false);
     }
@@ -83,8 +86,8 @@ export default function Home() {
           placeholder="Paste a YouTube URL here"
           onChange={(e) => setVideoURL(e.target.value)}
         />
-        <button onClick={handleGenerate} disabled={loading} className="w-full max-w-md p-4 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 cursor-pointer">
-             {loading ? "Generating..." : "Generate Study Material"}
+        <button onClick={handleGenerate} disabled={loading} className="w-full max-w-md p-4 bg-gradient-to-r from-blue-800 to-blue-400 text-white rounded-lg focus:outline-none focus:ring-2 cursor-pointer">
+             {loading ? <LoadingScreen /> : "Generate Study Material"}
         </button>
       </main>
     </div>

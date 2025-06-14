@@ -7,11 +7,11 @@ export const useVideosStore = create((set, get) => ({
   addVideo: (video) => {
     const exists = get().videos.some(v => v.videoId === video.videoId);
     if (!exists) {
-      set((state) => ({ videos: [...state.videos, video] }));
+      set((state) => ({ videos: [video, ...state.videos, ] }));
     }
   },
   setVideos: (videoArray) => set({ videos: videoArray }),
-  
+
   setMaterial: (videoId, data) => {
     set((state) => ({
       materials: {
@@ -23,5 +23,11 @@ export const useVideosStore = create((set, get) => ({
 
   getMaterial: (videoId) => get().materials[videoId],
 
-  clearVideos: () => set({ videos: [], materials: {} }),
+  removeVideo: (videoId) => set((state) => ({
+    videos: state.videos.filter(video => video.videoId !== videoId),
+    materials: Object.fromEntries(
+      Object.entries(state.materials).filter(([key]) => key !== videoId)
+    )
+  })),
+  
 }));

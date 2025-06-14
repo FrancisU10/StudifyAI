@@ -44,9 +44,15 @@ export default function Login() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
             />
+            {formError && (
+                <p className="text-red-500 text-sm mb-2">{formError}</p>
+                )}
+                {error && (
+                <p className="text-red-500 text-sm mb-2">{error}</p>
+            )}
             <button
                 type="submit"
-                className="w-64 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 cursor-pointer"
+                className="w-64 py-2 rounded bg-gradient-to-r from-blue-800 to-blue-500 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 cursor-pointer"
                 disabled={loading}
             >
                 {loading ? 'Logging in...' : 'Log In'}

@@ -23,7 +23,7 @@ export default function SignUp() {
         if (!result) {
             return
         }
-        router.push('/')
+        router.push('/confirm-email')
     }
 
     return (
@@ -62,7 +62,7 @@ export default function SignUp() {
 
             <button
                 type="submit"
-                className="w-64 py-2 rounded bg-blue-600 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 cursor-pointer"
+                className="w-64 py-2 rounded bg-gradient-to-r from-blue-800 to-blue-500 text-white focus:outline-none focus:ring-2 cursor-pointer"
             >
                 {loading ? 'Signing Up...' : 'Sign Up'}
             </button>
